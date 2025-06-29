@@ -14,3 +14,7 @@ The API development has not yet started
 
 Development of the project has not yet started
 
+## License
+
+[GPLv3.0](https://choosealicense.com/licenses/gpl-3.0/)
+
