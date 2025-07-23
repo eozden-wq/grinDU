@@ -28,4 +28,5 @@ model UserProfile {
   lastNames      String
   preferredNames String?
   dateOfBirth    DateTime
+  isVerified     Boolean
 }
