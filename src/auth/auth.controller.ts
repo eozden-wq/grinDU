@@ -6,10 +6,21 @@ import {
   UseGuards,
   Request,
   Get,
+  Body,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { IsEmail, IsNotEmpty, IsStrongPassword } from 'class-validator';
+
+export class CreateUserDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsStrongPassword()
+  password: string;
+}
 
 @Controller('auth')
 export class AuthController {
@@ -29,14 +40,15 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.CREATED)
-  @Post('sign-up')
-  async signUp(@Request() req: any) {
-    return this.authService.createUser(req.body.email, req.body.password);
+  @Post('register')
+  async signUp(@Body() createUserDto: CreateUserDto) {
+    const { email, password } = createUserDto;
+    return this.authService.createUser(email, password);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('test')
   test(@Request() req: any) {
-    return 'You\'re authenticated!';
+    return "You're authenticated!";
   }
 }
