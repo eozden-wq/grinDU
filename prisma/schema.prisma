@@ -22,11 +22,11 @@ model User {
 }
 
 model UserProfile {
-  id             Int      @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   user           User?
-  firstNames     String
-  lastNames      String
+  firstNames     String?
+  lastNames      String?
   preferredNames String?
-  dateOfBirth    DateTime
+  dateOfBirth    DateTime?
   isVerified     Boolean
 }
