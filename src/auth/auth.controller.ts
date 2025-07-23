@@ -5,6 +5,7 @@ import {
   Post,
   UseGuards,
   Request,
+  Response,
   Get,
   Body,
 } from '@nestjs/common';
@@ -12,34 +13,38 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { IsEmail, IsNotEmpty, IsStrongPassword } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiParam,
+  ApiProperty,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 export class CreateUserDto {
-  @ApiProperty()
+  @ApiProperty({ description: "User's email", example: 'foo@bar.com' })
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ description: "User's password", example: 'ABC123@!@#' })
   @IsStrongPassword()
   password: string;
 }
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @ApiBody({ type: CreateUserDto })
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @Post('login')
   login(@Request() req: any) {
     return this.authService.login(req.user);
-  }
-
-  @UseGuards(LocalAuthGuard)
-  @Post('logout')
-  async logout(@Request() req: any) {
-    return req.logout();
   }
 
   @HttpCode(HttpStatus.CREATED)
@@ -50,6 +55,9 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ description: "You're authenticated" })
+  @ApiUnauthorizedResponse({ description: "You're not authenticated" })
+  @ApiBearerAuth()
   @Get('test')
   test(@Request() req: any) {
     return "You're authenticated!";
