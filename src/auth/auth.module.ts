@@ -6,6 +6,8 @@ import { LocalStrategy } from './passport/local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './passport/jwt.strategy';
+import { ConfigService, ConfigType } from '@nestjs/config';
+import authConfig from '../config/auth.config';
 
 @Module({
   controllers: [AuthController],
@@ -13,9 +15,12 @@ import { JwtStrategy } from './passport/jwt.strategy';
   imports: [
     UsersModule,
     PassportModule,
-    JwtModule.register({
-      secret: 'THIS IS ONE SICK ASS SECRET',
-      signOptions: { expiresIn: '60s' },
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_CONSTANT'),
+        signOptions: { expiresIn: '60s' },
+      }),
     }),
   ],
 })
