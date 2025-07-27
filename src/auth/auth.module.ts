@@ -16,11 +16,11 @@ import authConfig from '../config/auth.config';
     UsersModule,
     PassportModule,
     JwtModule.registerAsync({
-      inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_CONSTANT'),
+        secret: configService.get<string>('auth.jwt_constant'),
         signOptions: { expiresIn: '60s' },
       }),
+      inject: [ConfigService],
     }),
   ],
 })

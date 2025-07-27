@@ -5,7 +5,6 @@ import {
   Post,
   UseGuards,
   Request,
-  Response,
   Get,
   Body,
 } from '@nestjs/common';
@@ -17,7 +16,6 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiOkResponse,
-  ApiParam,
   ApiProperty,
   ApiTags,
   ApiUnauthorizedResponse,
