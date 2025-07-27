@@ -7,7 +7,8 @@ import {
   Request,
   Patch,
   Body,
-  Param, ParseIntPipe,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -58,7 +59,9 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async getUserProfile(@Param('id', ParseIntPipe) id: number): Promise<any | null> {
+  async getUserProfile(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<any | null> {
     return this.usersService.publicProfile(id);
   }
 }
