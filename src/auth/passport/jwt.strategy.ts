@@ -10,7 +10,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     @Inject(authConfig.KEY)
     private configService: ConfigType<typeof authConfig>,
   ) {
-    console.log(configService.jwt_constant);
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,

@@ -1,4 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import * as assert from 'node:assert';
@@ -33,9 +39,18 @@ export class AuthService {
   }
 
   async createUser(email: string, pass: string): Promise<any> {
+    if (await this.usersService.user({ email })) {
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          error: 'User with this email already exists',
+        },
+        HttpStatus.CONFLICT,
+      );
+    }
+
     const saltRounds = 10;
     const hash = await bcrypt.hash(pass, saltRounds);
-
     const user = await this.usersService.createUser({
       id: uuidv4(),
       email,
