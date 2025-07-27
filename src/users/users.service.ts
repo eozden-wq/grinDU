@@ -19,8 +19,19 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: userWhereUniqueInput });
   }
 
-  async profile(userUUID: string): Promise<UserProfile | null> {
+  async privateProfile(userUUID: string): Promise<UserProfile | null> {
     return this.prisma.user.findUnique({ where: { id: userUUID } }).profile();
+  }
+
+  async publicProfile(profileID: number): Promise<any | null> {
+    const profile = await this.prisma.userProfile.findUnique({where: {id: profileID}});
+
+    if (!profile) {
+      throw new HttpException({status: HttpStatus.NOT_FOUND, error: 'Profile not found'}, HttpStatus.NOT_FOUND)
+    }
+
+    const {isVerified, ...data} = profile
+    return data;
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<User> {

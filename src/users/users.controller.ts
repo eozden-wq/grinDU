@@ -7,6 +7,7 @@ import {
   Request,
   Patch,
   Body,
+  Param, ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -44,7 +45,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   getMe(@Request() req: any) {
-    return this.usersService.profile(req.user.id);
+    return this.usersService.privateProfile(req.user.id);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -52,5 +53,12 @@ export class UsersController {
   @Patch('me/edit')
   async patchMe(@Request() req: any, @Body() patchProfileDTO: PatchProfileDTO) {
     return this.usersService.updateUserProfile(req.user.id, patchProfileDTO);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async getUserProfile(@Param('id', ParseIntPipe) id: number): Promise<any | null> {
+    return this.usersService.publicProfile(id);
   }
 }
