@@ -8,7 +8,9 @@ import {
   Patch,
   Body,
   Param,
-  ParseIntPipe, Post, Delete,
+  ParseIntPipe,
+  Post,
+  Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -46,9 +48,12 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   async editUserProfile(
     @Body() patchProfileDTO: PatchProfileDTO,
-    @Request() request: any
+    @Request() request: any,
   ): Promise<any | null> {
-    return this.usersService.updateUserProfile(request.user.id, patchProfileDTO);
+    return this.usersService.updateUserProfile(
+      request.user.id,
+      patchProfileDTO,
+    );
   }
 
   @HttpCode(HttpStatus.OK)

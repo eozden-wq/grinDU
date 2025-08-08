@@ -33,12 +33,19 @@ export class UsersService {
 
   // Only delete the user's profile and the user's account - We want to keep the groups created and any other
   // data pertaining to created groups by the user
-  async deleteUser(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<void> {
-    await this.prisma.user.delete({where: userWhereUniqueInput});
-    await this.prisma.userProfile.delete({where: {id: userWhereUniqueInput.userProfileId}});
+  async deleteUser(
+    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+  ): Promise<void> {
+    await this.prisma.user.delete({ where: userWhereUniqueInput });
+    await this.prisma.userProfile.delete({
+      where: { id: userWhereUniqueInput.userProfileId },
+    });
   }
 
-  async updateUserProfile(id: string, patchProfileDTO: PatchProfileDTO): Promise<UserProfile> {
+  async updateUserProfile(
+    id: string,
+    patchProfileDTO: PatchProfileDTO,
+  ): Promise<UserProfile> {
     const user = await this.prisma.user.findUnique({ where: { id } });
     assert(user);
 
@@ -67,7 +74,9 @@ export class UsersService {
     });
   }
 
-  async userProfile(where: Prisma.UserProfileWhereUniqueInput): Promise<UserProfile | null> {
+  async userProfile(
+    where: Prisma.UserProfileWhereUniqueInput,
+  ): Promise<UserProfile | null> {
     return this.prisma.userProfile.findUnique({ where });
   }
 }
