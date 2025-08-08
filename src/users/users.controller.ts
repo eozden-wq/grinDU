@@ -8,7 +8,7 @@ import {
   Patch,
   Body,
   Param,
-  ParseIntPipe,
+  ParseIntPipe, Post, Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -38,22 +38,17 @@ export class PatchProfileDTO {
   dateOfBirth?: string;
 }
 
-@Controller('users')
+@Controller('user')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
-  @Get('me')
-  getMe(@Request() req: any) {
-    return this.usersService.privateProfile(req.user.id);
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
-  @Patch('me/edit')
-  async patchMe(@Request() req: any, @Body() patchProfileDTO: PatchProfileDTO) {
-    return this.usersService.updateUserProfile(req.user.id, patchProfileDTO);
+  async editUserProfile(
+    @Body() patchProfileDTO: PatchProfileDTO,
+    @Request() request: any
+  ): Promise<any | null> {
+    return this.usersService.updateUserProfile(request.user.id, patchProfileDTO);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -62,6 +57,13 @@ export class UsersController {
   async getUserProfile(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<any | null> {
-    return this.usersService.publicProfile(id);
+    return this.usersService.userProfile({ id });
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @Delete('')
+  async deleteUser(@Request() request: any): Promise<any | null> {
+    return this.usersService.deleteUser({ id: request.user.id });
   }
 }
