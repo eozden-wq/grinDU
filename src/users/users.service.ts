@@ -76,7 +76,11 @@ export class UsersService {
 
   async userProfile(
     where: Prisma.UserProfileWhereUniqueInput,
-  ): Promise<UserProfile | null> {
-    return this.prisma.userProfile.findUnique({ where });
+  ): Promise<any | null> {
+    const profile = await this.prisma.userProfile.findUnique({ where });
+    assert(profile);
+
+    const {isVerified, ...result} = profile;
+    return result;
   }
 }

@@ -57,7 +57,7 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getUserProfile(
     @Param('id', ParseIntPipe) id: number,
