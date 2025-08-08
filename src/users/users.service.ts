@@ -19,26 +19,6 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: userWhereUniqueInput });
   }
 
-  async privateProfile(userUUID: string): Promise<UserProfile | null> {
-    return this.prisma.user.findUnique({ where: { id: userUUID } }).profile();
-  }
-
-  async publicProfile(profileID: number): Promise<any | null> {
-    const profile = await this.prisma.userProfile.findUnique({
-      where: { id: profileID },
-    });
-
-    if (!profile) {
-      throw new HttpException(
-        { status: HttpStatus.NOT_FOUND, error: 'Profile not found' },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    const { isVerified, ...data } = profile;
-    return data;
-  }
-
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({ data });
   }
@@ -51,11 +31,14 @@ export class UsersService {
     return this.prisma.user.update({ data, where });
   }
 
-  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.delete({ where });
+  // Only delete the user's profile and the user's account - We want to keep the groups created and any other
+  // data pertaining to created groups by the user
+  async deleteUser(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<void> {
+    await this.prisma.user.delete({where: userWhereUniqueInput});
+    await this.prisma.userProfile.delete({where: {id: userWhereUniqueInput.userProfileId}});
   }
 
-  async updateUserProfile(id: string, patchProfileDTO: PatchProfileDTO) {
+  async updateUserProfile(id: string, patchProfileDTO: PatchProfileDTO): Promise<UserProfile> {
     const user = await this.prisma.user.findUnique({ where: { id } });
     assert(user);
 
@@ -82,5 +65,9 @@ export class UsersService {
         ...patchProfileDTO,
       },
     });
+  }
+
+  async userProfile(where: Prisma.UserProfileWhereUniqueInput): Promise<UserProfile | null> {
+    return this.prisma.userProfile.findUnique({ where });
   }
 }
